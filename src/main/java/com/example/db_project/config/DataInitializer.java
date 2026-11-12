@@ -11,7 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-// ddl-auto: create 라서 앱을 다시 띄울 때마다 DB 가 비워진다 — 시드 데이터를 넣어준다
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
@@ -23,17 +22,24 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        Category novel = categoryRepository.save(new Category("소설"));
+        // 수정 포인트: "소설" 카테고리가 이미 있으면 가져오고, 없으면 새로 저장합니다.
+        Category novel = categoryRepository.findByName("소설")
+            .orElseGet(() -> categoryRepository.save(new Category("소설")));
 
-        for (int i = 1; i <= 5; i++) {
-            memberRepository.save(new Member("회원" + i, "member" + i + "@test.com"));
+        // 만약 회원이나 도서도 앱을 켤 때마다 중복으로 쌓이는 게 걱정된다면
+        // 아래처럼 데이터가 아예 없을 때만 넣도록 조건문을 걸어줄 수도 있습니다.
+        if (memberRepository.count() == 0) {
+            for (int i = 1; i <= 5; i++) {
+                memberRepository.save(new Member("회원" + i, "member" + i + "@test.com"));
+            }
         }
 
-        // 페이징(size=5) 확인을 위해 6권 이상 넣는다
-        for (int i = 1; i <= 10; i++) {
-            Book book = new Book("도서 " + i, "저자 " + i, 10000, 5);
-            book.assignCategory(novel);
-            bookRepository.save(book);
+        if (bookRepository.count() == 0) {
+            for (int i = 1; i <= 10; i++) {
+                Book book = new Book("도서 " + i, "저자 " + i, 10000, 5);
+                book.assignCategory(novel);
+                bookRepository.save(book);
+            }
         }
     }
 }
