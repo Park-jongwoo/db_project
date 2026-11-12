@@ -12,7 +12,7 @@ env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: bookstore
   ECS_CLUSTER: bookstore-cluster
-  ECS_SERVICE: bookstore-service
+  ECS_SERVICE: bookstore-task4-service-w7gmiqu8
   TASK_FAMILY: bookstore-task4
 
 jobs:
