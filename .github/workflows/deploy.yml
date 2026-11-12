@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: bookstore
   ECS_CLUSTER: bookstore-cluster
   ECS_SERVICE: bookstore-service
-  TASK_FAMILY: bookstore-task
+  TASK_FAMILY: bookstore-task4
 
 jobs:
   deploy:
